@@ -1,0 +1,19 @@
+﻿@model List<MusicPlayer.Models.Playlist>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No tienes playlists aún.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var playlist in Model)
+        {
+            <li class="list-group-item">
+                <a asp-controller="Playlist" asp-action="VerPlaylist" asp-route-id="@playlist.PlaylistID">
+                    @playlist.Nombre
+                </a>
+            </li>
+        }
+    </ul>
+}

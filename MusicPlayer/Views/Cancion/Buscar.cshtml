@@ -1,0 +1,30 @@
+﻿@model MusicPlayer.ViewM.CancionBusquedaVM
+
+<h2>Resultados para "@Model.Query"</h2>
+
+@if (!Model.Resultados.Any())
+{
+    <p>No se encontraron canciones.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Artista</th>
+                <th>Duración</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cancion in Model.Resultados)
+            {
+                <tr>
+                    <td>@cancion.Titulo</td>
+                    <td>@cancion.Artista</td>
+                    <td>@cancion.DuracionSegundos seg</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

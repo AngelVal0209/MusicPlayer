@@ -1,0 +1,47 @@
+﻿@model IEnumerable<MusicPlayer.Models.Cancion>
+
+@{
+    ViewData["Title"] = "Agregar Canciones";
+    var playlist = ViewData["Playlist"] as MusicPlayer.Models.Playlist;
+}
+
+<h2>Agregar Canciones a la Playlist: @playlist?.Nombre</h2>
+<a asp-action="VerPlaylist" asp-route-id="@playlist?.PlaylistID" class="btn btn-secondary mb-3">Volver a la Playlist</a>
+
+@if (Model.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Artista</th>
+                <th>Duración (segundos)</th>
+                <th>Fecha Agregado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cancion in Model)
+            {
+                <tr>
+                    <td>@cancion.Titulo</td>
+                    <td>@cancion.Artista</td>
+                    <td>@(cancion.DuracionSegundos ?? 0)</td>
+                    <td>@cancion.FechaAgregado.ToShortDateString()</td>
+                    <td>
+                        <form asp-action="AgregarCancion" method="post" style="display:inline;">
+                            <input type="hidden" name="playlistId" value="@playlist.PlaylistID" />
+                            <input type="hidden" name="cancionId" value="@cancion.CancionID" />
+
+                            <button type="submit" class="btn btn-success btn-sm">Agregar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay canciones disponibles para agregar.</p>
+}

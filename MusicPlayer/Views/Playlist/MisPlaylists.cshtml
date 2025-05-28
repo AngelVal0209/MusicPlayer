@@ -1,0 +1,77 @@
+﻿@model IEnumerable<MusicPlayer.Models.Playlist>
+
+@{
+    ViewData["Title"] = "Mis Playlists";
+}
+
+<h2>Mis Playlists</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Fecha Creación</th>
+            <th>Canciones</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var playlist in Model)
+        {
+            <tr>
+                <td>@playlist.Nombre</td>
+                <td>@playlist.FechaCreacion.ToShortDateString()</td>
+                <td>@(playlist.PlaylistCanciones?.Count ?? 0)</td>
+                <td>
+                    <a asp-action="VerPlaylist" asp-route-id="@playlist.PlaylistID" class="btn btn-info btn-sm">Ver</a>
+                    <a asp-action="EditarPlaylist" asp-route-id="@playlist.PlaylistID" class="btn btn-warning btn-sm">Editar</a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" data-playlistid="@playlist.PlaylistID" data-playlistname="@playlist.Nombre">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="EliminarPlaylist" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro que deseas eliminar la playlist <strong id="playlistName"></strong>?</p>
+                    <input type="hidden" id="playlistId" name="id" value="" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var confirmDeleteModal = document.getElementById('confirmDeleteModal')
+        confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget
+            var playlistId = button.getAttribute('data-playlistid')
+            var playlistName = button.getAttribute('data-playlistname')
+
+            var modalPlaylistName = confirmDeleteModal.querySelector('#playlistName')
+            var modalPlaylistId = confirmDeleteModal.querySelector('#playlistId')
+
+            modalPlaylistName.textContent = playlistName
+            modalPlaylistId.value = playlistId
+        })
+    </script>
+}

@@ -1,0 +1,22 @@
+﻿@model MusicPlayer.ViewM.PlaylistUVM
+
+@{
+    ViewData["Title"] = "Crear Playlist";
+}
+
+<h2>Crear Nueva Playlist</h2>
+
+<form asp-action="CrearPlaylist" method="post" class="form-group">
+    <div class="mb-3">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" placeholder="Nombre de la playlist" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Crear Playlist</button>
+    <a asp-action="MisPlaylists" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,48 @@
+﻿@model MusicPlayer.Models.Playlist
+
+@{
+    ViewData["Title"] = $"Playlist: {Model.Nombre}";
+}
+
+<h2>@Model.Nombre</h2>
+<p>Creada el: @Model.FechaCreacion.ToShortDateString()</p>
+
+<a asp-action="AgregarCancion" asp-route-playlistId="@Model.PlaylistID" class="btn btn-primary mb-3">Agregar Canción</a>
+<a asp-action="MisPlaylists" class="btn btn-secondary mb-3">Volver a Mis Playlists</a>
+
+@if (Model.PlaylistCanciones != null && Model.PlaylistCanciones.Any())
+{
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Artista</th>
+                <th>Duración (segundos)</th>
+                <th>Fecha Agregado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pc in Model.PlaylistCanciones.OrderByDescending(pc => pc.FechaAgregado))
+            {
+                <tr>
+                    <td>@pc.Cancion.Titulo</td>
+                    <td>@pc.Cancion.Artista</td>
+                    <td>@(pc.Cancion.DuracionSegundos ?? 0)</td>
+                    <td>@pc.FechaAgregado.ToShortDateString()</td>
+                    <td>
+                        <form asp-action="QuitarCancion" method="post" style="display:inline;">
+                            <input type="hidden" name="playlistId" value="@Model.PlaylistID" />
+                            <input type="hidden" name="cancionId" value="@pc.CancionID" />
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que quieres quitar esta canción?');">Quitar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No hay canciones en esta playlist aún.</p>
+}

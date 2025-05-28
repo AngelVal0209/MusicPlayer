@@ -1,0 +1,26 @@
+﻿@model MusicPlayer.ViewM.PlaylistUVM
+
+@{
+    ViewData["Title"] = "Editar Playlist";
+}
+
+<h2>Editar Playlist</h2>
+
+<form asp-action="EditarPlaylist" method="post">
+    <input type="hidden" asp-for="PlaylistID" />
+
+    <div class="form-group">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-2">Guardar Cambios</button>
+    <a asp-action="MisPlaylists" class="btn btn-secondary mt-2">Cancelar</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

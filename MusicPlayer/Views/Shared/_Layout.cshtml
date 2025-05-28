@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MusicPlayer</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MusicPlayer.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Layout.css" />
+    <style>
+        #sugerencias {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar vertical -->
+    <div class="sidebar d-flex flex-column">
+        <!-- Logo clickeable -->
+        <a asp-area="" asp-controller="Home" asp-action="Index">
+            <img src="~/src/logo.png" alt="Logo MusicPlayer" class="logo-img" />
+        </a>
+
+        <!-- Navegación alineada -->
+        <nav class="nav flex-column flex-grow-1">
+            <!-- Buscador con sugerencias -->
+            <form class="mb-3 px-3 position-relative" autocomplete="off">
+                <input class="form-control" id="busqueda" type="search" placeholder="Buscar canción o artista..." />
+                <div id="sugerencias" class="list-group position-absolute w-100" style="z-index: 999;"></div>
+            </form>
+
+            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+            <a class="nav-link text-dark" asp-controller="Playlist" asp-action="CrearPlaylist">Crear Playlist</a>
+            <div class="user-playlists mt-3">
+                <h6>Mis Playlists</h6>
+                @await Component.InvokeAsync("UserPlaylists")
+            </div>
+
+            <!-- Usuario logueado + Salir -->
+            <div class="mt-auto text-center mb-3">
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    var nombreUsuario = User.Claims
+                    .FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value ?? "Usuario";
+
+                    <a class="nav-link fw-bold text-primary"
+                       asp-controller="Usuario" asp-action="EditarPerfil">
+                        Bienvenido, @nombreUsuario
+                    </a>
+                }
+
+                <a class="nav-link text-danger" asp-controller="Home" asp-action="Salir">Salir</a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+        <footer class="border-top footer text-muted mt-4">
+            <div class="container">
+                &copy; 2025 - MusicPlayer - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        const input = document.getElementById("busqueda");
+        const sugerencias = document.getElementById("sugerencias");
+
+        input.addEventListener("input", async function () {
+            const query = this.value.trim();
+
+            if (query.length < 2) {
+                sugerencias.innerHTML = "";
+                return;
+            }
+
+            const response = await fetch(`/Cancion/Sugerencias?query=${encodeURIComponent(query)}`);
+            const data = await response.json();
+
+            sugerencias.innerHTML = "";
+
+            data.forEach(item => {
+                const opcion = document.createElement("a");
+                opcion.href = `/Cancion/Buscar?query=${encodeURIComponent(item)}`;
+                opcion.classList.add("list-group-item", "list-group-item-action");
+                opcion.textContent = item;
+                sugerencias.appendChild(opcion);
+            });
+        });
+
+        document.addEventListener("click", function (e) {
+            if (!sugerencias.contains(e.target) && e.target !== input) {
+                sugerencias.innerHTML = "";
+            }
+        });
+
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && sugerencias.children.length === 0) {
+                e.preventDefault();
+                window.location.href = `/Cancion/Buscar?query=${encodeURIComponent(input.value.trim())}`;
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

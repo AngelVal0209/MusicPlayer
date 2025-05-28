@@ -1,0 +1,53 @@
+﻿@model MusicPlayer.ViewM.EditarPerfilUVM
+
+@{
+    ViewData["Title"] = "Editar Perfil";
+}
+
+<h2 class="mb-4">Editar Perfil</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (ViewData["Mensaje"] != null)
+{
+    <div class="alert alert-warning">
+        @ViewData["Mensaje"]
+    </div>
+}
+
+<form asp-action="EditarPerfil" method="post">
+    <div class="form-group mb-3">
+        <label asp-for="NombreUsuario" class="form-label"></label>
+        <input asp-for="NombreUsuario" class="form-control" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="CorreoElectronico" class="form-label"></label>
+        <input asp-for="CorreoElectronico" type="email" class="form-control" />
+    </div>
+
+    <hr />
+    <p><strong>Cambio de Contraseña (opcional)</strong></p>
+
+    <div class="form-group mb-3">
+        <label asp-for="ViejaContraseña" class="form-label">Contraseña Actual</label>
+        <input asp-for="ViejaContraseña" type="password" class="form-control" />
+    </div>
+
+    <div class="form-group mb-4">
+        <label asp-for="NuevaContrasena" class="form-label">Nueva Contraseña</label>
+        <input asp-for="NuevaContrasena" type="password" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary ms-2">Cancelar</a>
+</form>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

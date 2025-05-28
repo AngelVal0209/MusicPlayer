@@ -1,0 +1,162 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using MusicPlayer.Data;
+using MusicPlayer.Models;
+using Microsoft.EntityFrameworkCore;
+using MusicPlayer.ViewM;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+
+namespace MusicPlayer.Controllers
+{
+    public class LoginController : Controller
+    {
+        private readonly AppDBContext _AppDbContext;
+        public LoginController(AppDBContext appDBContext) { 
+        _AppDbContext = appDBContext;
+        }
+
+        [HttpGet]
+        public IActionResult Registro()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Registro(RegistroUVM modelo)
+        {
+            // Validación de contraseñas
+            if (modelo.Contrasena != modelo.ConfirmarContraseña)
+            {
+                ViewData["Mensaje"] = "Las contraseñas no coinciden.";
+                return View(modelo);
+            }
+
+            // Validación del modelo
+            if (!ModelState.IsValid)
+            {
+                return View(modelo);
+            }
+            // Verificar si el correo ya está registrado
+            bool correoEnUso = await _AppDbContext.Usuarios
+                .AnyAsync(u => u.CorreoElectronico == modelo.CorreoElectronico);
+
+            if (correoEnUso)
+            {
+                ViewData["Mensaje"] = "El correo electrónico ya está en uso.";
+                return View(modelo);
+            }
+            // Crear objeto usuario
+            Usuario usuario = new Usuario
+            {
+                NombreUsuario = modelo.NombreUsuario,
+                CorreoElectronico = modelo.CorreoElectronico,
+                Contrasena = modelo.Contrasena, // Aquí deberías encriptar la contraseña antes de guardar
+                FechaNacimiento = modelo.FechaNacimiento,
+                Genero = modelo.Genero
+            };
+
+            // Guardar usuario en base de datos
+            await _AppDbContext.Usuarios.AddAsync(usuario);
+            await _AppDbContext.SaveChangesAsync();
+
+            // Comprobar si el usuario fue guardado correctamente
+            if (usuario.UsuarioID != 0)
+            {
+                // Agregar mensaje de éxito a TempData
+                TempData["SuccessMessage"] = "Te registraste correctamente. ¡Bienvenido!";
+                return RedirectToAction("Login", "Login");
+            }
+
+            // En caso de error al guardar, devolver la vista con un mensaje
+            ViewData["Mensaje"] = "Hubo un error al registrar el usuario.";
+            return View(modelo);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginUVM modelo)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(modelo);
+            }
+
+            var usuario_encontrado = await _AppDbContext.Usuarios
+                .FirstOrDefaultAsync(u =>
+                    u.CorreoElectronico == modelo.CorreoElectronico &&
+                    u.Contrasena == modelo.Contrasena);
+
+            if (usuario_encontrado == null)
+            {
+                ViewData["Mensaje"] = "Correo o contraseña incorrectos.";
+                return View(modelo);
+            }
+
+            // Crear lista de claims usando ClaimTypes.NameIdentifier para UserId
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, usuario_encontrado.NombreUsuario),
+        new Claim(ClaimTypes.NameIdentifier, usuario_encontrado.UsuarioID.ToString())
+    };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = false, // Cambia a true si quieres "recordarme"
+                AllowRefresh = true
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+
+            // Redirigir al Home o al lugar que desees
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        [HttpGet]
+        public IActionResult RecuperarContraseña()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> RecuperarContraseña(RecuperarContraseñaUVM modelo)
+        {
+            var usuario = await _AppDbContext.Usuarios
+                .Where(u => u.NombreUsuario == modelo.NombreUsuario && u.CorreoElectronico == modelo.CorreoElectronico && u.FechaNacimiento == modelo.FechaNacimiento)
+                .FirstOrDefaultAsync();
+
+            if (usuario == null)
+            {
+                ViewData["Mensaje"] = "No se encontraron coincidencias para los datos proporcionados.";
+                return View(modelo);
+            }
+
+            if (modelo.NuevaContrasena != modelo.ConfirmarNuevaContrasena)
+            {
+                ViewData["Mensaje"] = "Las contraseñas no coinciden.";
+                return View(modelo);
+            }
+
+            usuario.Contrasena = modelo.NuevaContrasena;
+            await _AppDbContext.SaveChangesAsync();
+
+            ViewData["Success"] = true;
+            ViewData["MensajeExito"] = "Tu contraseña ha sido restablecida correctamente. Serás redirigido en 5 segundos.";
+            return View(); // No redirige, solo vuelve a cargar la vista
+        }
+    }
+}
