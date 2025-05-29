@@ -1,0 +1,35 @@
+﻿@model MusicPlayer.ViewM.PlaylistAleatoriaVM  
+
+<h2>@Model.Nombre</h2>
+<p>Creada: @Model.FechaCreacion.ToShortDateString()</p>
+
+<ul>
+@foreach (var cancion in Model.Canciones)
+{
+    <li>
+        @cancion.Titulo - @cancion.Artista
+
+        <form asp-controller="Playlist" asp-action="SeleccionarPlaylist" method="post" style="display:inline-block; margin-left:10px;">
+            <input type="hidden" name="cancionId" value="@cancion.CancionID" />
+            <button type="submit" class="btn-agregar">+ Agregar a playlist</button>
+        </form>
+    </li>
+}
+</ul>
+
+<style>
+    .btn-agregar {
+        background-color: #1DB954;
+        border: none;
+        color: white;
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-agregar:hover {
+        background-color: #17a044;
+    }
+</style>

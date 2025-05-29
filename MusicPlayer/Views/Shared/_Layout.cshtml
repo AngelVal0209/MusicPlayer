@@ -22,19 +22,21 @@
     <!-- Sidebar vertical -->
     <div class="sidebar d-flex flex-column">
         <!-- Logo clickeable -->
-        <a asp-area="" asp-controller="Home" asp-action="Index">
+        <a asp-area="" asp-controller="PlaylistAleatoria" asp-action="Inicio">
             <img src="~/src/logo.png" alt="Logo MusicPlayer" class="logo-img" />
         </a>
 
         <!-- Navegación alineada -->
         <nav class="nav flex-column flex-grow-1">
             <!-- Buscador con sugerencias -->
-            <form class="mb-3 px-3 position-relative" autocomplete="off">
-                <input class="form-control" id="busqueda" type="search" placeholder="Buscar canción o artista..." />
-                <div id="sugerencias" class="list-group position-absolute w-100" style="z-index: 999;"></div>
-            </form>
+            <div class="px-3 mb-3">
+                <a href="@Url.Action("Buscar", "Cancion")" class="btn btn-primary">
+                    Buscar canciones
+                </a>
+            </div>
 
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+
+            <a class="nav-link text-dark" asp-area="" asp-controller="PlaylistAleatoria" asp-action="Inicio">Inicio</a>
             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
             <a class="nav-link text-dark" asp-controller="Playlist" asp-action="CrearPlaylist">Crear Playlist</a>
             <div class="user-playlists mt-3">

@@ -5,6 +5,8 @@ using MusicPlayer.ViewM;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace MusicPlayer.Controllers
 {
@@ -221,5 +223,26 @@ namespace MusicPlayer.Controllers
 
             return RedirectToAction("VerPlaylist", new { id = playlistId });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> SeleccionarPlaylist(int cancionId)
+        {
+            var userId = ObtenerUsuarioID();
+            if (userId == null) return RedirectToAction("Login", "Login");
+
+            var playlists = await _AppDbContext.Playlists
+                                .Where(p => p.UsuarioID == userId)
+                                .ToListAsync();
+
+            var model = new SeleccionarPlaylistVM
+            {
+                CancionId = cancionId,
+                Playlists = playlists
+            };
+
+            return View(model);
+        }
+
+
     }
 }

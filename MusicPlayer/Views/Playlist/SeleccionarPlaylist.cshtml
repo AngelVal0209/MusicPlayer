@@ -1,0 +1,17 @@
+﻿@model MusicPlayer.ViewM.SeleccionarPlaylistVM
+<h2>Agregar canción a una playlist</h2>
+
+<form asp-action="AgregarCancion" method="post">
+    <input type="hidden" name="cancionId" value="@Model.CancionId" />
+
+    <label for="playlistSelect">Selecciona la playlist:</label>
+    <select id="playlistSelect" name="playlistId" required>
+        <option value="">-- Elige una playlist --</option>
+        @foreach (var playlist in Model.Playlists)
+        {
+            <option value="@playlist.PlaylistID">@playlist.Nombre</option>
+        }
+    </select>
+
+    <button type="submit">Agregar</button>
+</form>

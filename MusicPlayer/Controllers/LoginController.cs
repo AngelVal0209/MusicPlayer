@@ -27,19 +27,19 @@ namespace MusicPlayer.Controllers
         [HttpPost]
         public async Task<IActionResult> Registro(RegistroUVM modelo)
         {
-            // Validación de contraseñas
+            // verificamos contraseña
             if (modelo.Contrasena != modelo.ConfirmarContraseña)
             {
                 ViewData["Mensaje"] = "Las contraseñas no coinciden.";
                 return View(modelo);
             }
 
-            // Validación del modelo
+            // verificacmos modelos
             if (!ModelState.IsValid)
             {
                 return View(modelo);
             }
-            // Verificar si el correo ya está registrado
+            // Verificamos correo
             bool correoEnUso = await _AppDbContext.Usuarios
                 .AnyAsync(u => u.CorreoElectronico == modelo.CorreoElectronico);
 
@@ -48,12 +48,12 @@ namespace MusicPlayer.Controllers
                 ViewData["Mensaje"] = "El correo electrónico ya está en uso.";
                 return View(modelo);
             }
-            // Crear objeto usuario
+     
             Usuario usuario = new Usuario
             {
                 NombreUsuario = modelo.NombreUsuario,
                 CorreoElectronico = modelo.CorreoElectronico,
-                Contrasena = modelo.Contrasena, // Aquí deberías encriptar la contraseña antes de guardar
+                Contrasena = modelo.Contrasena, 
                 FechaNacimiento = modelo.FechaNacimiento,
                 Genero = modelo.Genero
             };
@@ -65,12 +65,11 @@ namespace MusicPlayer.Controllers
             // Comprobar si el usuario fue guardado correctamente
             if (usuario.UsuarioID != 0)
             {
-                // Agregar mensaje de éxito a TempData
+                
                 TempData["SuccessMessage"] = "Te registraste correctamente. ¡Bienvenido!";
                 return RedirectToAction("Login", "Login");
             }
-
-            // En caso de error al guardar, devolver la vista con un mensaje
+   
             ViewData["Mensaje"] = "Hubo un error al registrar el usuario.";
             return View(modelo);
         }
@@ -102,7 +101,7 @@ namespace MusicPlayer.Controllers
                 return View(modelo);
             }
 
-            // Crear lista de claims usando ClaimTypes.NameIdentifier para UserId
+       
             var claims = new List<Claim>
     {
         new Claim(ClaimTypes.Name, usuario_encontrado.NombreUsuario),
@@ -113,7 +112,7 @@ namespace MusicPlayer.Controllers
 
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = false, // Cambia a true si quieres "recordarme"
+                IsPersistent = false, // recordar
                 AllowRefresh = true
             };
 
@@ -122,8 +121,7 @@ namespace MusicPlayer.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
 
-            // Redirigir al Home o al lugar que desees
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Inicio", "PlaylistAleatoria");
         }
 
 
@@ -156,7 +154,7 @@ namespace MusicPlayer.Controllers
 
             ViewData["Success"] = true;
             ViewData["MensajeExito"] = "Tu contraseña ha sido restablecida correctamente. Serás redirigido en 5 segundos.";
-            return View(); // No redirige, solo vuelve a cargar la vista
+            return View(); // solo carga la vista de nuevo 
         }
     }
 }

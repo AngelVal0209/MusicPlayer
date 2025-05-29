@@ -1,0 +1,126 @@
+﻿@model List<MusicPlayer.ViewM.PlaylistAleatoriaVM>
+
+@{
+    ViewData["Title"] = "Descubre - Inicio";
+}
+
+<h2 class="titulo-principal">Recomendaciones para ti</h2>
+
+<div class="playlist-container">
+    @foreach (var playlist in Model)
+    {
+        <a href="@Url.Action("Detalle", "PlaylistAleatoria", new { id = playlist.PlaylistID })" class="playlist-card">
+            <img src="https://source.unsplash.com/100x100/?music,playlist,@playlist.Nombre" alt="Imagen de playlist" class="playlist-img" />
+            <div class="playlist-info">
+                <h4>@playlist.Nombre</h4>
+                <small>Creada: @playlist.FechaCreacion.ToString("dd MMM yyyy")</small>
+                <ul>
+                    @foreach (var cancion in playlist.Canciones.Take(3)) // 3 primeras canciones
+                    {
+                        <li>@cancion.Titulo - @cancion.Artista</li>
+                    }
+                    @if (playlist.Canciones.Count > 3)
+                    {
+                        <li class="mas-canciones">+ @((playlist.Canciones.Count) - 3) más...</li>
+                    }
+                </ul>
+            </div>
+        </a>
+    }
+</div>
+
+<style>
+    .titulo-principal {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        color: #1DB954; /* Verde Spotify */
+    }
+
+    .playlist-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .playlist-card {
+        display: flex;
+        align-items: flex-start;
+        background: #121212;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        padding: 15px;
+        color: #fff;
+        text-decoration: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .playlist-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(29, 185, 84, 0.7);
+        }
+
+    .playlist-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 8px;
+        object-fit: cover;
+        margin-right: 15px;
+        flex-shrink: 0;
+        background: #222;
+    }
+
+    .playlist-info h4 {
+        margin: 0 0 5px 0;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: #1DB954;
+    }
+
+    .playlist-info small {
+        color: #b3b3b3;
+        font-size: 0.85rem;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .playlist-info ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+        .playlist-info ul li {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
+            color: #ccc;
+        }
+
+            .playlist-info ul li.mas-canciones {
+                font-style: italic;
+                color: #1DB954;
+                cursor: default;
+            }
+
+   
+
+    {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .playlist-img {
+        margin: 0 0 10px 0;
+    }
+
+    .playlist-info ul li {
+        max-width: 100%;
+    }
+
+    }</style>

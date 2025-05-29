@@ -1,19 +1,44 @@
 ﻿@model MusicPlayer.ViewM.CancionBusquedaVM
 
-<h2>Resultados para "@Model.Query"</h2>
+@{
+    ViewData["Title"] = "Buscar Canciones";
+}
 
-@if (!Model.Resultados.Any())
+<h2>Buscar canciones</h2>
+
+<form method="get" asp-action="Buscar" class="mb-4">
+    <input type="text" name="query" value="@Model.Query" class="form-control" placeholder="Buscar canción o artista..." />
+    <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+</form>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (Model.Resultados.Count == 0)
 {
     <p>No se encontraron canciones.</p>
 }
 else
 {
-    <table class="table">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Título</th>
                 <th>Artista</th>
-                <th>Duración</th>
+                <th>Duración (s)</th>
+                <th>Fecha agregado</th>
+                <th>Agregar a playlist</th>
             </tr>
         </thead>
         <tbody>
@@ -22,7 +47,21 @@ else
                 <tr>
                     <td>@cancion.Titulo</td>
                     <td>@cancion.Artista</td>
-                    <td>@cancion.DuracionSegundos seg</td>
+                    <td>@(cancion.DuracionSegundos ?? 0)</td>
+                    <td>
+                        <form asp-action="AgregarCancion" method="post" class="d-flex align-items-center">
+                            <input type="hidden" name="cancionId" value="@cancion.CancionID" />
+                            <input type="hidden" name="query" value="@Model.Query" />
+                            <select name="playlistId" class="form-select form-select-sm me-2" required>
+                                <option value="" disabled selected>Selecciona playlist</option>
+                                @foreach (var playlist in Model.PlaylistsUsuario)
+                                {
+                                    <option value="@playlist.PlaylistID">@playlist.Nombre</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-success btn-sm">Agregar</button>
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>
