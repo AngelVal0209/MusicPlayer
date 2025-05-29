@@ -133,6 +133,11 @@ namespace MusicPlayer.Controllers
         [HttpPost]
         public async Task<IActionResult> RecuperarContraseña(RecuperarContraseñaUVM modelo)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(modelo);
+            }
+
             var usuario = await _AppDbContext.Usuarios
                 .Where(u => u.NombreUsuario == modelo.NombreUsuario && u.CorreoElectronico == modelo.CorreoElectronico && u.FechaNacimiento == modelo.FechaNacimiento)
                 .FirstOrDefaultAsync();
@@ -149,12 +154,30 @@ namespace MusicPlayer.Controllers
                 return View(modelo);
             }
 
+            if (string.IsNullOrWhiteSpace(modelo.NuevaContrasena))
+            {
+                ViewData["Mensaje"] = "La nueva contraseña no puede estar vacía.";
+                return View(modelo);
+            }
+
             usuario.Contrasena = modelo.NuevaContrasena;
-            await _AppDbContext.SaveChangesAsync();
+            _AppDbContext.Entry(usuario).Property(u => u.Contrasena).IsModified = true;
+
+            try
+            {
+                await _AppDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Aquí puedes loguear ex.Message para depurar
+                ViewData["Mensaje"] = "Ocurrió un error al actualizar la contraseña.";
+                return View(modelo);
+            }
 
             ViewData["Success"] = true;
             ViewData["MensajeExito"] = "Tu contraseña ha sido restablecida correctamente. Serás redirigido en 5 segundos.";
-            return View(); // solo carga la vista de nuevo 
+            return View();
         }
+
     }
 }

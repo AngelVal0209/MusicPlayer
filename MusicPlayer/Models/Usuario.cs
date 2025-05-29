@@ -1,10 +1,13 @@
-﻿namespace MusicPlayer.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MusicPlayer.Models
 {
     public class Usuario
     {
         public int UsuarioID { get; set; }
         public string NombreUsuario { get; set; }
         public string CorreoElectronico { get; set; }
+        [Required]
         public string Contrasena { get; set; }
         public DateTime? FechaNacimiento { get; set; }
         public string Genero { get; set; }
