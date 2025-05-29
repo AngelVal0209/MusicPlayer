@@ -413,6 +413,88 @@
       ]
     },
     {
+      "Route": "lib/Logo.png",
+      "AssetFile": "lib/Logo.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "170645"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"973yD6u6wq1lpLFAUIGyeJLacZS6z+XM13fLc+J5x20=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 29 May 2025 06:09:38 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-973yD6u6wq1lpLFAUIGyeJLacZS6z+XM13fLc+J5x20="
+        }
+      ]
+    },
+    {
+      "Route": "lib/Logo.rb9ruybcgx.png",
+      "AssetFile": "lib/Logo.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "170645"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"973yD6u6wq1lpLFAUIGyeJLacZS6z+XM13fLc+J5x20=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 29 May 2025 06:09:38 GMT"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "rb9ruybcgx"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-973yD6u6wq1lpLFAUIGyeJLacZS6z+XM13fLc+J5x20="
+        },
+        {
+          "Name": "label",
+          "Value": "lib/Logo.png"
+        }
+      ]
+    },
+    {
       "Route": "lib/bootstrap/LICENSE",
       "AssetFile": "lib/bootstrap/LICENSE",
       "Selectors": [],

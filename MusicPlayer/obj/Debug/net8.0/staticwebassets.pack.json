@@ -21,6 +21,10 @@
       "PackagePath": "staticwebassets\\js\\site.js"
     },
     {
+      "Id": "C:\\Users\\nicol\\Desktop\\MusicPlayer\\MusicPlayer\\wwwroot\\lib\\Logo.png",
+      "PackagePath": "staticwebassets\\lib\\Logo.png"
+    },
+    {
       "Id": "C:\\Users\\nicol\\Desktop\\MusicPlayer\\MusicPlayer\\wwwroot\\lib\\bootstrap\\LICENSE",
       "PackagePath": "staticwebassets\\lib\\bootstrap"
     },

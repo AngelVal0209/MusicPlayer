@@ -10,117 +10,172 @@
     @foreach (var playlist in Model)
     {
         <a href="@Url.Action("Detalle", "PlaylistAleatoria", new { id = playlist.PlaylistID })" class="playlist-card">
-            <img src="https://source.unsplash.com/100x100/?music,playlist,@playlist.Nombre" alt="Imagen de playlist" class="playlist-img" />
-            <div class="playlist-info">
-                <h4>@playlist.Nombre</h4>
-                <small>Creada: @playlist.FechaCreacion.ToString("dd MMM yyyy")</small>
-                <ul>
-                    @foreach (var cancion in playlist.Canciones.Take(3)) // 3 primeras canciones
-                    {
-                        <li>@cancion.Titulo - @cancion.Artista</li>
-                    }
-                    @if (playlist.Canciones.Count > 3)
-                    {
-                        <li class="mas-canciones">+ @((playlist.Canciones.Count) - 3) más...</li>
-                    }
-                </ul>
+            <div class="playlist-img-wrapper">
+                <img src="https://source.unsplash.com/collection/899422/150x150?sig=@playlist.PlaylistID" alt="Imagen de playlist" class="playlist-img" />
             </div>
+            <div class="playlist-details">
+                <h4 title="@playlist.Nombre">@playlist.Nombre</h4>
+                <small>Creada: @playlist.FechaCreacion.ToString("dd MMM yyyy")</small>
+            </div>
+            <ul class="playlist-songs">
+                @foreach (var cancion in playlist.Canciones.Take(3))
+                {
+                    <li title="@cancion.Titulo - @cancion.Artista">@cancion.Titulo - @cancion.Artista</li>
+                }
+                @if (playlist.Canciones.Count > 3)
+                {
+                    <li class="mas-canciones">+ @((playlist.Canciones.Count) - 3) más...</li>
+                }
+            </ul>
         </a>
     }
 </div>
 
 <style>
-    .titulo-principal {
+    body {
+        background-color: #fff;
+        color: #222;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 20px;
+    }
+
+    .titulo-principal {
         font-weight: 700;
         font-size: 2rem;
         margin-bottom: 20px;
-        color: #1DB954; /* Verde Spotify */
+        color: #111;
+        text-align: center;
     }
 
     .playlist-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 25px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        max-width: 2200px;
+        margin: 0 auto;
     }
 
     .playlist-card {
-        display: flex;
-        align-items: flex-start;
-        background: #121212;
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        display: grid;
+        grid-template-columns: 250px 1fr;
+        grid-template-rows: auto 1fr;
+        gap: 12px 15px;
+        background: #fff;
+        border: 1px solid #000;
+        border-radius: 10px;
         padding: 15px;
-        color: #fff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        color: #222;
         text-decoration: none;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: box-shadow 0.3s ease, transform 0.2s ease;
+        width: 250px;
+        height: 200px;
+        overflow: hidden;
     }
 
         .playlist-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 8px 20px rgba(29, 185, 84, 0.7);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+            transform: translateY(-4px);
         }
 
-    .playlist-img {
-        width: 100px;
-        height: 100px;
+    .playlist-img-wrapper {
+        grid-row: 1 / span 2;
+        width: 150px;
+        height: 150px;
+        border: 1px solid #000;
         border-radius: 8px;
+        overflow: hidden;
+        background: #eee;
+    }
+
+    .playlist-img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-        margin-right: 15px;
-        flex-shrink: 0;
-        background: #222;
-    }
-
-    .playlist-info h4 {
-        margin: 0 0 5px 0;
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: #1DB954;
-    }
-
-    .playlist-info small {
-        color: #b3b3b3;
-        font-size: 0.85rem;
         display: block;
-        margin-bottom: 10px;
     }
 
-    .playlist-info ul {
-        list-style: none;
-        padding-left: 0;
-        margin: 0;
+    .playlist-details {
+        grid-column: 2;
+        grid-row: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
-        .playlist-info ul li {
-            font-size: 0.9rem;
-            margin-bottom: 4px;
+        .playlist-details h4 {
+            margin: 0 0 6px 0;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #000;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 160px;
-            color: #ccc;
         }
 
-            .playlist-info ul li.mas-canciones {
+        .playlist-details small {
+            color: #555;
+            font-size: 0.85rem;
+        }
+
+    .playlist-songs {
+        grid-column: 2;
+        grid-row: 2;
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+        overflow-y: auto;
+        max-height: 70px;
+    }
+
+        .playlist-songs li {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #333;
+        }
+
+            .playlist-songs li.mas-canciones {
                 font-style: italic;
-                color: #1DB954;
+                color: #000;
                 cursor: default;
             }
 
-   
+        /* Scrollbar para lista si es necesario */
+        .playlist-songs::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .playlist-songs::-webkit-scrollbar-thumb {
+            background-color: rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+
+        .playlist-songs::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
 
     {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
+        grid-template-columns: 1fr;
+        max-width: 90%;
     }
 
-    .playlist-img {
-        margin: 0 0 10px 0;
+    .playlist-card {
+        grid-template-columns: 100px 1fr;
+        grid-template-rows: auto auto auto;
+        width: 100%;
+        height: auto;
     }
 
-    .playlist-info ul li {
-        max-width: 100%;
+    .playlist-img-wrapper {
+        width: 100px;
+        height: 100px;
+    }
+
+    .playlist-songs {
+        max-height: none;
     }
 
     }</style>
