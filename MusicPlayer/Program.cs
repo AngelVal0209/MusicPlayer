@@ -16,15 +16,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/Login/Login";
-        options.ExpireTimeSpan = TimeSpan.FromDays(7); // Duración si el usuario elige "recordarme"
-        options.SlidingExpiration = true; // Renueva la cookie si está activa
+        options.ExpireTimeSpan = TimeSpan.FromDays(7); 
+        options.SlidingExpiration = true; 
 
-        // Solo activa la cookie persistente si tú la habilitas manualmente
+       
         options.Events = new CookieAuthenticationEvents
         {
             OnSigningIn = context =>
             {
-                // No se guarda la cookie como persistente, así expira al cerrar navegador
+               
                 context.Properties.IsPersistent = false;
                 return Task.CompletedTask;
             }

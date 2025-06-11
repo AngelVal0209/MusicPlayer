@@ -1,33 +1,16 @@
 ﻿@model List<MusicPlayer.ViewM.PlaylistAleatoriaVM>
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Descubre - Inicio";
 }
-
-<h2 class="titulo-principal">Recomendaciones para ti</h2>
-
-<div class="playlist-container">
-    @foreach (var playlist in Model)
+<div class="text-center">
+    @if (User.Identity!.IsAuthenticated)
     {
-        <a href="@Url.Action("Detalle", "PlaylistAleatoria", new { id = playlist.PlaylistID })" class="playlist-card">
-            <div class="playlist-img-wrapper">
-                <img src="https://source.unsplash.com/collection/899422/150x150?sig=@playlist.PlaylistID" alt="Imagen de playlist" class="playlist-img" />
-            </div>
-            <div class="playlist-details">
-                <h4 title="@playlist.Nombre">@playlist.Nombre</h4>
-                <small>Creada: @playlist.FechaCreacion.ToString("dd MMM yyyy")</small>
-            </div>
-            <ul class="playlist-songs">
-                @foreach (var cancion in playlist.Canciones.Take(3))
-                {
-                    <li title="@cancion.Titulo - @cancion.Artista">@cancion.Titulo - @cancion.Artista</li>
-                }
-                @if (playlist.Canciones.Count > 3)
-                {
-                    <li class="mas-canciones">+ @((playlist.Canciones.Count) - 3) más...</li>
-                }
-            </ul>
-        </a>
+        <h1 class="display-6">
+            Bienvenido de nuevo
+            @User.Claims.Where(c => c.Type == ClaimTypes.Name).Select(c => c.Value).SingleOrDefault()
+        </h1>
     }
 </div>
 
@@ -48,16 +31,17 @@
     }
 
     .playlist-container {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         gap: 20px;
-        max-width: 2200px;
+        max-width: 100%;
         margin: 0 auto;
     }
 
     .playlist-card {
         display: grid;
-        grid-template-columns: 250px 1fr;
+        grid-template-columns: 150px 1fr;
         grid-template-rows: auto 1fr;
         gap: 12px 15px;
         background: #fff;
@@ -68,8 +52,9 @@
         color: #222;
         text-decoration: none;
         transition: box-shadow 0.3s ease, transform 0.2s ease;
-        width: 250px;
-        height: 200px;
+        width: 90%;
+        max-width: 600px;
+        height: auto;
         overflow: hidden;
     }
 
@@ -125,7 +110,7 @@
         padding-left: 0;
         margin: 0;
         overflow-y: auto;
-        max-height: 70px;
+        max-height: 100px;
     }
 
         .playlist-songs li {
@@ -143,7 +128,6 @@
                 cursor: default;
             }
 
-        /* Scrollbar para lista si es necesario */
         .playlist-songs::-webkit-scrollbar {
             width: 6px;
         }
@@ -156,26 +140,33 @@
         .playlist-songs::-webkit-scrollbar-track {
             background-color: transparent;
         }
+</style>
 
+<p id="mensajeBienvenida" style="text-align: center;">Qué bueno volverte a ver.</p>
+
+<h2 class="titulo-principal">Recomendaciones para ti</h2>
+
+<div class="playlist-container">
+    @foreach (var playlist in Model)
     {
-        grid-template-columns: 1fr;
-        max-width: 90%;
+        <a href="@Url.Action("Detalle", "PlaylistAleatoria", new { id = playlist.PlaylistID })" class="playlist-card">
+            <div class="playlist-img-wrapper">
+                <img src="https://source.unsplash.com/collection/899422/150x150?sig=@playlist.PlaylistID" alt="Imagen de playlist" class="playlist-img" />
+            </div>
+            <div class="playlist-details">
+                <h4 title="@playlist.Nombre">@playlist.Nombre</h4>
+                <small>Creada: @playlist.FechaCreacion.ToString("dd MMM yyyy")</small>
+            </div>
+            <ul class="playlist-songs">
+                @foreach (var cancion in playlist.Canciones.Take(3))
+                {
+                    <li title="@cancion.Titulo - @cancion.Artista">@cancion.Titulo - @cancion.Artista</li>
+                }
+                @if (playlist.Canciones.Count > 3)
+                {
+                    <li class="mas-canciones">+ @((playlist.Canciones.Count) - 3) más...</li>
+                }
+            </ul>
+        </a>
     }
-
-    .playlist-card {
-        grid-template-columns: 100px 1fr;
-        grid-template-rows: auto auto auto;
-        width: 100%;
-        height: auto;
-    }
-
-    .playlist-img-wrapper {
-        width: 100px;
-        height: 100px;
-    }
-
-    .playlist-songs {
-        max-height: none;
-    }
-
-    }</style>
+</div>
